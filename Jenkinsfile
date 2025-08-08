@@ -41,7 +41,7 @@ pipeline {
 
         stage('Deploy no Google Cloud') {
             steps {
-                
+                sh 'echo "Subindo na Cloud"'
             }
         }
 
