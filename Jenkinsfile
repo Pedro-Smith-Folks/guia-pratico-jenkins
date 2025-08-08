@@ -1,5 +1,9 @@
 pipeline {
     agent any //Define quem pode realizar essa automação
+    environment {
+        // Isso instrui o Jenkins a se conectar ao Docker através do Named Pipe do Windows.
+        DOCKER_HOST = "npipe:////./pipe/docker_engine" 
+    }
 
     stages { // Estagios de execução
 
