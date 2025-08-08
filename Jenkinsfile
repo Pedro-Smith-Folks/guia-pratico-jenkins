@@ -1,5 +1,10 @@
 pipeline {
     agent any //Define quem pode realizar essa automação
+
+    tools {
+        nodejs 'NodeJS-24' 
+    }
+
     environment {
         // Isso instrui o Jenkins a se conectar ao Docker através do Named Pipe do Windows.
         DOCKER_HOST = "npipe:////./pipe/docker_engine" 
@@ -10,9 +15,12 @@ pipeline {
         stage('Testes') {
             steps {
                 sh 'echo "Executando testes da aplicação"'
-                dir('src') { // Executa os comandos dentro do diretório 'src'
-                    sh 'npm install' // Instala as dependências definidas no package.json
-                    sh 'npm test'    // Executa o script de teste
+                // O Jenkins irá adicionar o Node.js ao PATH automaticamente
+                sh 'node -v'
+                sh 'npm -v'
+                dir('src') {
+                    sh 'npm install'
+                    sh 'npm test'
                 }
             }
         }
