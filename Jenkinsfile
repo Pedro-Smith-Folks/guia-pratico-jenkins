@@ -5,7 +5,9 @@ pipeline {
         DOCKER_HOST = "npipe:////./pipe/docker_engine" 
     }
 
-    stage('Testes') {
+    stages { // Estagios de execução
+
+        stage('Testes') {
             steps {
                 sh 'echo "Executando testes da aplicação"'
                 dir('src') { // Executa os comandos dentro do diretório 'src'
@@ -14,8 +16,6 @@ pipeline {
                 }
             }
         }
-
-    stages { // Estagios de execução
 
         stage('Build Docker Image') {
             steps {
