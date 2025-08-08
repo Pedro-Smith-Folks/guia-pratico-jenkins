@@ -5,6 +5,16 @@ pipeline {
         DOCKER_HOST = "npipe:////./pipe/docker_engine" 
     }
 
+    stage('Testes') {
+            steps {
+                sh 'echo "Executando testes da aplicação"'
+                dir('src') { // Executa os comandos dentro do diretório 'src'
+                    sh 'npm install' // Instala as dependências definidas no package.json
+                    sh 'npm test'    // Executa o script de teste
+                }
+            }
+        }
+
     stages { // Estagios de execução
 
         stage('Build Docker Image') {
@@ -21,16 +31,16 @@ pipeline {
                 sh 'echo "Executando o comando Docker push"'
                 script{
                     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                        dockerapp.push('latest') // tag //docker.image('pedrofolks/folks-jenkins:${env.BUILD_ID}', , '-f ./src/Dockerfile ./src').push()
+                        //docker.image('pedrofolks/folks-jenkins:${env.BUILD_ID}', , '-f ./src/Dockerfile ./src').push()
+                        dockerapp.push('latest')
                         dockerapp.push("${env.BUILD_ID}")
                     }
                 }
             }
         }
 
-        stage('Deploy no Kubernetes') {
+        stage('Deploy no Google Cloud') {
             steps {
-                sh 'echo "Executando o comando kubectl apply"'
                 
             }
         }
