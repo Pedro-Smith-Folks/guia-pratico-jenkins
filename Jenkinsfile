@@ -3,17 +3,24 @@ pipeline {
 
     stages { // Estagios de execução
 
-        stage('Build Docker Image') { // Bloco de passos de execução
+        stage('Build Docker Image') {
             steps {
                 sh 'echo "Executando o comando Docker Build"'
-
+                script { // Plugins do Jenkins, abstraem as linhas de comando (Código Groovy)
+                    dockerapp = docker.build("pedrofolks/folks-jenkins:${env.BUILD_ID}", '-f ./src/Dockerfile ./src') // Caminho para DockerFile, Contexto de build
+                }
             }
         }
 
         stage('Push Docker Image') {
             steps {
                 sh 'echo "Executando o comando Docker push"'
-                
+                script{
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                        dockerapp.push('latest') // tag //docker.image('pedrofolks/folks-jenkins:${env.BUILD_ID}', , '-f ./src/Dockerfile ./src').push()
+                        dockerapp.push("${env.BUILD_ID}")
+                    }
+                }
             }
         }
 
@@ -23,5 +30,6 @@ pipeline {
                 
             }
         }
+
     }
 }
