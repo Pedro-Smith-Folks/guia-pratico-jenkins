@@ -22,5 +22,6 @@ pipeline {
                 sh 'echo "Executando o comando kubectl apply'
                 
             }
+        }
     }
 }
