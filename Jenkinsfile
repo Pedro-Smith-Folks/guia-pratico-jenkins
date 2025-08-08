@@ -49,7 +49,24 @@ pipeline {
 
         stage('Deploy no Google Cloud') {
             steps {
-                sh 'echo "Subindo na Cloud"'
+                script {
+                    // Autentica no Google Cloud usando a credencial do Jenkins
+                    withCredentials([file(credentialsId: 'google-cloud-credentials', variable: 'gcloud_key')]) {
+                        sh 'gcloud auth activate-service-account --key-file=${gcloud_key}'
+                        
+                        // Configura o kubectl para apontar para o seu cluster GKE
+                        // Substitua 'SEU_PROJETO', 'SUA_ZONA' e 'SEU_CLUSTER' pelos valores corretos
+                        sh 'gcloud container clusters get-credentials SEU_CLUSTER --zone SUA_ZONA --project SEU_PROJETO'
+                        
+                        sh 'echo "Realizando o deploy da aplicação"'
+                        
+                        // Atualiza o arquivo de deployment com a imagem correta
+                        sh "sed -i 's|image: .*|image: pedrofolks/folks-jenkins:${env.BUILD_ID}|g' k8s/deployment.yaml"
+
+                        // Aplica a configuração ao cluster
+                        sh 'kubectl apply -f k8s/deployment.yaml'
+                    }
+                }
             }
         }
 
